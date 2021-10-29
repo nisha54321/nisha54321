@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+        <title>Animation_3D</title>
+        
+		<style>
+			body { margin: 0; }
+		</style>
+	</head>
+	<body>
+        <link rel="icon" href="/home/bisag/Downloads/bisag_n.png" type="image/x-icon">
+
+        <div class="header">
+            <img src="/home/bisag/Downloads/bisag_n.png" alt="logo" />
+            <h2><span style="color:#073763">3D object</span></h2>
+        </div>
+        <div class="footer">
+            <p>@copyright by Bisag-N</p>
+          </div>
+
+		<div id="container"></div>
+		
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			body {
+				overflow: hidden;
+				background:#ffffff;
+			}
+            .header img {
+                float: left;
+                text-align: center;
+                width: 100px;
+                height: 50px;
+                position:relative;
+                }
+            .header h2 {
+				text-align: center;
+				color: #54880f;
+            }
+            .footer {
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                background-color: #ffffff;
+                color: #153897;
+                text-align: center;
+             }
+
+        </style>
+        <script src="https://unpkg.com/three@0.85.0/build/three.min.js"></script>
+		<script src="https://unpkg.com/three@0.85.0/examples/js/Detector.js"></script>
+		<script src="https://unpkg.com/three@0.85.0/examples/js/libs/stats.min.js"></script>
+		<script src="https://unpkg.com/three@0.85.0/examples/js/controls/OrbitControls.js"></script>
+		
+        <script>
+			window.addEventListener('load', function() {
+			if (!Detector.webgl) Detector.addGetWebGLMessage();
+
+			var w = window.innerWidth,
+				h = window.innerHeight;
+
+            var container, renderer, scene, camera, controls, children;
+            
+            var cam2, camHelper, stats, isDown = false,
+				isDragging = false;
+			var raycaster, mouse = new THREE.Vector2(),
+				INTERSECTED, bbox;
+
+			(function init() {
+				renderer = new THREE.WebGLRenderer({
+					antialias: true
+				});
+				renderer.setPixelRatio(window.devicePixelRatio);
+				renderer.setSize(w, h);
+				container = document.getElementById('container');
+				container.appendChild(renderer.domElement);
+
+				
+				// world
+				scene = new THREE.Scene();
+				scene.fog = new THREE.FogExp2(0xf3f5f7, 0.002);//white f3f5f7 , black:1E2630 /background color of web
+				renderer.setClearColor(scene.fog.color);
+				// camera
+				camera = new THREE.PerspectiveCamera(60, w / h, 1, 2000);
+				camera.position.x = 140;
+				camera.position.y = 55;
+				camera.position.z = 140;
+				camera.lookAt(new THREE.Vector3(0, 0, 0));
+				camHelper = new THREE.CameraHelper(camera);
+				scene.add(camHelper);
+
+				controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+				
+				var gridXZ = new THREE.GridHelper(500, 10);
+				//scene.add(gridXZ);
+
+				// lights
+				light = new THREE.DirectionalLight(0x6699ff);// skyblue 33cc33 green 0x373737gray
+				light.position.set(1, 1, 1);
+				scene.add(light);
+				light = new THREE.DirectionalLight(0x002288);//002288blue
+				light.position.set(-1, -1, -1);
+				scene.add(light);
+				light = new THREE.AmbientLight(0x373737);// gray 000066 dark blue
+				scene.add(light);
+				
+				const light1 = new THREE.HemisphereLight( 0x003300, 0x339966, 1 ); //ffffbb:yellow 073763:blue 003300:mehndi rama:339966
+				scene.add( light1 );
+
+				const pointlight = new THREE.PointLight( 0x6699ff, 1, 100 );//sky blue
+				pointlight.position.set( 50, 50, 50 );
+				scene.add( pointlight );
+
+				const spotLight = new THREE.SpotLight( 0x33cc33 );//green
+				spotLight.position.set( 100, 1000, 100 );
+
+				spotLight.castShadow = true;
+
+				spotLight.shadow.mapSize.width = 1024;
+				spotLight.shadow.mapSize.height = 1024;
+
+				spotLight.shadow.camera.near = 500;
+				spotLight.shadow.camera.far = 4000;
+				spotLight.shadow.camera.fov = 30;
+				scene.add( spotLight );
+
+				children = new THREE.Object3D();
+				//object colour
+				var material = new THREE.MeshPhongMaterial({
+					color: 0xfb3550,//33e02d:green
+					shading: THREE.FlatShading
+				});
+
+				//cylinder
+				geometry = new THREE.CylinderGeometry(0, 20, 40, 20);
+				var cylinder = new THREE.Mesh(geometry, material.clone());
+				cylinder.position.set(-90, 20, 30);
+
+				children.add(cylinder);
+
+				scene.add(children);
+
+				raycaster = new THREE.Raycaster();//mouse picking
+				
+				var geometry = new THREE.BoxGeometry(1, 1, 1);
+				var material = new THREE.MeshBasicMaterial({
+					color: 0x00ff00
+				});
+				var cube = new THREE.Mesh(geometry, material);
+				bbox = new THREE.BoxHelper(cube);
+				//scene.add(bbox);
+
+				window.addEventListener('resize', onWindowResize, false);
+				container.addEventListener('mousemove', onMouseMove, false);
+				
+			})();
+
+			function onWindowResize() {
+				w = window.innerWidth;
+				h = window.innerHeight;
+
+				camera.aspect = w / h;
+				camera.updateProjectionMatrix();
+				renderer.setSize(w, h);
+
+			}
+
+			function onMouseMove(event) {
+				event.preventDefault();
+				if (isDown) isDragging = true;
+
+				if (!isDragging) {
+					mouse.x = (event.clientX / w) * 2 - 1;
+					mouse.y = -(event.clientY / h) * 2 + 1;
+
+					raycaster.setFromCamera(mouse, camera);
+					var intersects = raycaster.intersectObjects(children.children);
+					if (intersects.length > 0) {
+						if (INTERSECTED != intersects[0].object) {
+							if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+							INTERSECTED = intersects[0].object;
+							bbox.update(INTERSECTED);
+							INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+							INTERSECTED.material.emissive.setHex(0xffff00);//mouse hover :yellow
+							container.style.cursor = 'pointer';
+						}
+					} else {
+						if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+						INTERSECTED = null;
+						container.style.cursor = 'auto';
+					}
+				}
+			}
+
+			(function animate() {
+				requestAnimationFrame(animate);
+
+				camHelper.visible = false;
+				bbox.visible = false;
+				children.rotation.x += 0.01;
+				children.rotation.y += 0.01;
+				controls.update();
+				renderer.render(scene, camera);
+		
+            })
+			();
+		
+		});
+		</script>
+	</body>
+</html>
