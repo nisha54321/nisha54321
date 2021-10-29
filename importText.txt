@@ -1,0 +1,70 @@
+imp note and commands
+ 
+remove pdadmin 
+sudo apt autoremove pgadmin4
+ at a time all dependency install in .txt file
+$ python -m pip freeze > requirements.txt
+p3 install -r requirements.txt
+
+source venv/bin/activate
+
+
+terminal:::
+pip3 install jupyter
+jupyter notebook;
+
+Jupyter Notebook open in your browser, you may have noticed that the URL for the dashboard is something like http://localhost:8888/tree.
+
+ALPHAGO is an artificial intelligence (AI) agent that is specialized to play Go, a Chinese strategy board game, against human competitors. AlphaGo is a Google DeepMind project. The ability to create a learning algorithm that can beat a human player at strategic games is a measure of AI development.
+
+---------------------------------------------------
+#pyuic5 -x magneticFieldCal.ui -o magneticFieldCal.py
+
+15. Use the pyrcc4 command to compile the resource file:
+pyrcc4 –o resources_rc.py resources.qrc
+
+--------------------------------------------------
+CREATE EXTENSION pgrouting CASCADE;
+CREATE EXTENSION postgis;
+
+SELECT * FROM pgr_dijkstra('
+SELECT gid AS id, start_id::int4 AS source, end_id::int4 AS target, 
+shape_leng::float8 AS cost FROM network',
+1, 5, false);
+
+select geom from network where gid in (46794, 46793, 46743, 46741)
+
+
+select geom from network where gid in  (36596, 36657, 36936, 36935, 36976, 36975, 36974, 36674, 36625, 36574, 36573, 35188, 35186, -1)
+
+--------------------------------------------------------------
+SELECT (geom)  FROM public.border_road limit 10;
+SELECT ST_AsText(geom)  FROM public.border_road limit 10;
+SELECT ST_AsText(ST_Transform(ST_SetSRID(geom, 4326), 3857)  FROM public.border_road limit 10;
+				 
+SELECT ST_AsText(ST_Transform(ST_SetSRID(geom,4326),3857)) As spere_merc FROM public.border_road limit 10;;
+SELECT ST_AsText(ST_Transform(ST_SetSRID(geom,4326),3857)) As spere_merc FROM public.border_road limit 10;;
+SELECT ST_Transform(ST_SetSRID(geom,4326),3857) As spere_merc FROM public.border_road limit 10;
+
+
+###pgadmin
+SELECT ST_AsText(ST_Transform(ST_SetSRID(geom,4326),3857)) As spere_merc FROM public.network limit 10;;
+SELECT (geom)  FROM public.network limit 10;
+
+SELECT ST_AsText(geom)  FROM public.network limit 10;
+
+
+geom = "010200000017000000F8BEF1B5E77F524050E70D411FEF4040F0489AE4EC7F5240004CD5873FEF404010040132F47F5240085F2C674AEF404084EE70E0FA7F5240B87C3B2E4FEF4040DCE54AF3FD7F524090A361E75CEF404038E213FC008052403055360763EF4040BC1C5487018052403070575469EF4040084A0A2C0080524058A2917472EF40402C19390BFB7F52402005B0B783EF40408C0F6B78FA7F524008DA8F1491EF404084E03B7BF87F524000A80AFC97EF4040DCB82224F77F5240D0BD9E54A0EF40409466BC45F17F5240687DA8D9A8EF40405C40D690EE7F524090CAD0C2AFEF40405C390F82E97F52405032AB77B8EF40406CF9707FE47F524040F482F4B9EF4040A8CA411ADF7F5240704D4E48C6EF40407C8E5C92DE7F5240586FA186CAEF40402C5E0AB4E07F5240F029BC15D3EF40409CD3F94BE67F524058F92180E5EF4040808E8F16E77F524030BEEB7DF4EF4040BCDFEBB5EA7F524098C7D3F203F0404090DDCE56EF7F5240806D252A0AF04040"
+SELECT ST_AsText(ST_Transform(ST_SetSRID(geom,4326),3857)) As spere_merc FROM public.network limit 10;;
+
+str1 = (26030, 25692, 25656, 25739, 25742, 25934, 25963, 25964, 25973, 26165)
+SELECT ST_AsText(ST_Transform(ST_SetSRID(geom,4326),3857)) As spere_merc FROM public.network where gid in (26030, 25692, 25656, 25739, 25742, 25934, 25963, 25964, 25973, 26165) ;
+
+SELECT ST_Transform(ST_SetSRID(geom,4326),3857) As spere_merc FROM public.network limit 10;
+------------------------------------------------------------------
+
+
+
+
+
+
